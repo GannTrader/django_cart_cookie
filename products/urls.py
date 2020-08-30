@@ -3,6 +3,6 @@ from .import views
 app_name = 'products'
 
 urlpatterns = [
-	path('', views.product),
+	path('', views.product, name = 'product'),
 	path('addtocart/<int:pk>', views.addtocart, name = 'addtocart'),
 ]
