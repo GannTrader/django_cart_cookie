@@ -14,7 +14,7 @@
 	      <tr>
 	        <td>{{cart.product}}</td>
 	        <td>${{cart.price}}</td>
-	        <td>x {{cart.quantity}}</td>
+	        <td>x <input type="number" min="1" value="{{cart.quantity}}" id="quantity_{{cart.product.id}}" onclick="updateCart({{cart.product.id}})"></td>
 	        <td><a href="{% url 'products:deleteCart' cart.product.id %}" title="">Delete</a></td>
 	      </tr>
       	{% endfor %}
@@ -23,4 +23,5 @@
       	</tr>
 	    </tbody>
 	  </table>
+	  
 {% endblock %}

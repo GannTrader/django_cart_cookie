@@ -101,3 +101,11 @@ def deleteCart(request, id):
 	product = Products.objects.get(id=id)
 	Order.objects.filter(product = product).delete()
 	return redirect('products:viewCart')
+
+def updateCart(request):
+	id = request.POST.get('id')
+	number = request.POST.get('number')
+
+	product = Products.objects.get(id = id)
+	Order.objects.filter(product=product).update(quantity = number)
+	return redirect('products:viewCart')
