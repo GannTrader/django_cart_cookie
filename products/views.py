@@ -10,6 +10,7 @@ def product(request):
 def addtocart(request, pk):
 	# nếu user login, ta add vào bảng order bình thường
 	# nếu chưa login ta sẽ tạo cookie (nếu chưa có cookie) và add vô bảng như user login
+	# quan trong là khi bảng order sẽ có quá nhiều dữ liệu dạng guest giỏ hàng thì phải xóa đi sau 1 thời gian nhất định với ebay =90 days => tạo 1 code chạy để xác định xem cái nào = 90 thông qua created_at trong bảng Order
 	product = Products.objects.get(pk = pk)
 	
 	if str(request.user) != 'AnonymousUser':
@@ -36,7 +37,7 @@ def addtocart(request, pk):
 		if not request.COOKIES.get('customer'):
 			customer = get_random_string(length = 25)
 			response = render(request, 'products/listproduct.html')
-			response.set_cookie('customer', customer)
+			response.set_cookie('customer', customer, 60*60*24*30)
 
 			Order.objects.create(
 				customer = customer,
