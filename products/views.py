@@ -24,13 +24,13 @@ def addtocart(request, pk):
 			else:
 				Order.objects.create(
 					customer = request.user,
-					product = Products.objects.get(pk = pk),
+					product = product,
 					quantity = 1
 				)
 		else:
 			Order.objects.create(
 				customer = request.user,
-				product = Products.objects.get(pk = pk),
+				product = product,
 				quantity = 1
 			)
 	else:
