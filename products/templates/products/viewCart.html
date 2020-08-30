@@ -1,0 +1,26 @@
+{% extends 'products/base.html' %}
+{% block content %}
+	 <table class="table table-striped">
+	    <thead>
+	      <tr>
+	        <th>Product</th>
+	        <th>Price</th>
+	        <th>Quantity</th>
+	        <th>Delete</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+    	{% for cart in yourCart %}
+	      <tr>
+	        <td>{{cart.product}}</td>
+	        <td>${{cart.price}}</td>
+	        <td>x{{cart.quantity}}</td>
+	        <td><a href="{% url 'products:deleteCart' cart.product.id %}" title="">Delete</a></td>
+	      </tr>
+      	{% endfor %}
+      	<tr>
+      		<td class="font-weight-bold">TOTAL: {{total |floatformat:2}}</td>
+      	</tr>
+	    </tbody>
+	  </table>
+{% endblock %}

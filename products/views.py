@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from .models import Products, Order
 from django.utils.crypto import get_random_string
 from django.http import HttpResponse
+from django.contrib import messages
+
 # Create your views here.
 def product(request):
 	listproduct = Products.objects.all()
@@ -21,18 +23,26 @@ def addtocart(request, pk):
 				customerExit = Order.objects.get(customer = request.user, product = product)
 				customerExit.quantity += 1
 				customerExit.save()
+				messages.success(request, 'your add more than 1 item in your cart')
+
 			else:
 				Order.objects.create(
 					customer = request.user,
 					product = product,
-					quantity = 1
+					quantity = 1,
+					price = product.price
 				)
+				messages.info(request, 'your add 1 item in your cart')
+
 		else:
 			Order.objects.create(
 				customer = request.user,
 				product = product,
-				quantity = 1
+				quantity = 1,
+				price = product.price
 			)
+			messages.info(request, 'your add 1 item in your cart')
+
 	else:
 		if not request.COOKIES.get('customer'):
 			customer = get_random_string(length = 25)
@@ -42,8 +52,10 @@ def addtocart(request, pk):
 			Order.objects.create(
 				customer = customer,
 				product = product,
-				quantity = 1
+				quantity = 1,
+				price = product.price
 			)	
+			messages.info(request, 'your add 1 item in your cart')
 			return response
 		else:
 			customerExit = Order.objects.filter(customer = str(request.COOKIES['customer']), product = product)
@@ -51,10 +63,41 @@ def addtocart(request, pk):
 				customerExit = Order.objects.get(customer = str(request.COOKIES['customer']), product = product)
 				customerExit.quantity += 1
 				customerExit.save()
+				messages.warning(request, 'your add more than 1 item in your cart')
+
 			else:
 				Order.objects.create(
 					customer = str(request.COOKIES['customer']),
 					product = product,
-					quantity = 1
+					quantity = 1,
+					price = product.price
 				)
+				messages.info(request, 'your add 1 item in your cart')
+
 	return redirect('products:product')
+
+def viewCart(request):
+	total = 0
+	if str(request.user) != 'AnonymousUser':
+		yourCart = Order.objects.filter(customer = request.user)
+		if yourCart.exists():
+			for item in yourCart:
+				total += item.price * item.quantity
+			return render(request, 'products/viewCart.html', {'yourCart': yourCart, 'total': total})
+		else:
+			messages.info(request, 'your cart do not have any product')
+			return render(request, 'products/viewCart.html', {'total': total})
+	else:
+		yourCart = Order.objects.filter(customer = str(request.COOKIES['customer']))
+		if yourCart.exists():
+			for item in yourCart:
+				total += item.price * item.quantity
+			return render(request, 'products/viewCart.html', {'yourCart': yourCart, 'total': total})
+		else:
+			messages.info(request, 'your cart do not have any product')
+			return render(request, 'products/viewCart.html', {'total': total})
+
+def deleteCart(request, id):
+	product = Products.objects.get(id=id)
+	Order.objects.filter(product = product).delete()
+	return redirect('products:viewCart')
