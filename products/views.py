@@ -6,7 +6,7 @@ from django.contrib import messages
 
 # Create your views here.
 def product(request):
-	listproduct = Products.objects.all()
+	listproduct = Products.objects.filter(status = 'active')
 	return render(request, 'products/listproduct.html', {'product': listproduct})
 
 def addtocart(request, pk):
