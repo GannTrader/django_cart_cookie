@@ -3,6 +3,7 @@ from .models import Products, Order
 from django.utils.crypto import get_random_string
 from django.http import HttpResponse
 from django.contrib import messages
+from django.contrib.auth import authenticate
 
 # Create your views here.
 def product(request):
@@ -15,7 +16,7 @@ def addtocart(request, pk):
 	# quan trong là khi bảng order sẽ có quá nhiều dữ liệu dạng guest giỏ hàng thì phải xóa đi sau 1 thời gian nhất định với ebay =90 days => tạo 1 code chạy để xác định xem cái nào = 90 thông qua created_at trong bảng Order
 	product = Products.objects.get(pk = pk)
 	
-	if str(request.user) != 'AnonymousUser':
+	if request.user.is_authenticated:
 		customer = Order.objects.filter(customer = request.user)
 
 		if customer.exists():
@@ -78,7 +79,7 @@ def addtocart(request, pk):
 
 def viewCart(request):
 	total = 0
-	if str(request.user) != 'AnonymousUser':
+	if request.user.is_authenticated:
 		yourCart = Order.objects.filter(customer = request.user)
 		if yourCart.exists():
 			for item in yourCart:
