@@ -47,7 +47,6 @@ def addtocart(request, pk):
 	else:
 		if not request.COOKIES.get('customer'):
 			customer = get_random_string(length = 25)
-			response = render(request, 'products/listproduct.html')
 			response.set_cookie('customer', customer, 60*60*24*30)
 
 			Order.objects.create(
@@ -57,7 +56,6 @@ def addtocart(request, pk):
 				price = product.price
 			)	
 			messages.info(request, 'your add 1 item in your cart')
-			return response
 		else:
 			customerExit = Order.objects.filter(customer = str(request.COOKIES['customer']), product = product)
 			if customerExit.exists():
